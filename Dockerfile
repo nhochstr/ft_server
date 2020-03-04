@@ -8,7 +8,12 @@ RUN apt-get -y install nginx \
 && apt-get -y install php php-fpm php-mysql php7.3-gd php-ssh2 \
 && apt-get -y install wget \
 && wget http://wordpress.org/latest.tar.gz \
-&& tar xzvf latest.tar.gz
+&& tar xzvf latest.tar.gz \
+&& wget https://files.phpmyadmin.net/phpMyAdmin/5.0.1/phpMyAdmin-5.0.1-all-languages.tar.gz
+&& tar xvf phpMyAdmin-5.0.1-all-languages.tar.gz \
+&& rm hpMyAdmin-5.0.1-all-languages.tar.gz \
+&& mv phpMyAdmin-5.0.1-all-languages/ /var/www/html/phpmyadmin
+
 
 ADD ./srcs/info.php /var/www/html/
 ADD ./srcs/wordpress /etc/nginx/sites-available/
