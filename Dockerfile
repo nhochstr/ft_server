@@ -14,9 +14,10 @@ RUN apt-get -y install nginx \
 && rm phpMyAdmin-5.0.1-all-languages.tar.gz \
 && mv phpMyAdmin-5.0.1-all-languages/ /var/www/phpmyadmin
 
-
+ADD ./srcs/wordpress /tmp/
+ADD ./srcs/wordpress-off /tmp/
+ADD /srcs/autoindex.sh /tmp/
 ADD ./srcs/info.php /var/www/info/
-ADD ./srcs/wordpress /etc/nginx/sites-available/
 ADD ./srcs/wp-config.php /wordpress/
 ADD /srcs/db.sql /tmp/
 
@@ -28,7 +29,6 @@ RUN service mysql start \
 	&& chown -R root:www-data /var/www/* \
 	&& mkdir /var/www/wordpress/wp-content/uploads \
 	&& chown -R root:www-data /var/www/wordpress/wp-content/uploads \
-	&& ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/ \
 	&& rm -rf /etc/nginx/sites-enabled/default \
 && service php7.3-fpm restart\
 && yes "" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt \
@@ -37,6 +37,7 @@ RUN service mysql start \
 EXPOSE 80
 EXPOSE 443
 
-# CMD service mysql start \
-# && service php7.3-fpm restart \
-# && nginx -g "daemon off;"
+CMD bash /tmp/autoindex.sh \ 
+&& service mysql start \
+&& service php7.3-fpm restart \
+&& nginx -g "daemon off;"
